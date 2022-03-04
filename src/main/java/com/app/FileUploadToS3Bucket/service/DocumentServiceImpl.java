@@ -50,7 +50,7 @@ public class DocumentServiceImpl implements DocumentService {
 		
 		 try {
 	            File file = convertMultiPartFileToFile(multipartFile);
-	          
+	          if (getFileExtension(file).equalsIgnoreCase("csv")) {
 	        	String orgId  ="ORG00002";
 	    		String userId ="USER00002";
 	        	String docCatagory ="education";	
@@ -68,6 +68,9 @@ public class DocumentServiceImpl implements DocumentService {
 				document.setType(multipartFile.getContentType());
 				documentDetails=	documentDetailsRepository.save(document);
 	            file.delete();  // To remove the file locally created in the project folder.
+		}else {
+			System.out.println("Invalid file format");	
+		  }
 	        } catch (final AmazonServiceException ex) {
 	           System.out.println("error message ....... "  +  ex.getErrorMessage());
 	        }		
@@ -100,6 +103,18 @@ public class DocumentServiceImpl implements DocumentService {
         	System.out.println("Error converting the multi-part file to file= "+ex.getMessage());
         }
         return file;
+	}
+
+	// get file extension//
+	private String getFileExtension(File file) {
+
+		String fileName = file.getName();
+		if (fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+			return fileName.substring(fileName.lastIndexOf(".") + 1);
+		} else {
+
+			return "";
+		}			
 	}
 
 
